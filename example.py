@@ -16,7 +16,7 @@ assert cap.isOpened(), "Error reading video file"
 fps = cap.get(cv2.CAP_PROP_FPS)
 
 
-# Initialize Object Counter
+# Initialize Object Timing
 timer = ObjectTimer(
     fps=fps,  # FPS from you source video
     view_img=True,  # Display the image during processing
