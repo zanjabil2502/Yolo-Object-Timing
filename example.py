@@ -43,7 +43,7 @@ while cap.isOpened():
     # Perform object tracking on the current frame
     tracks = model.track(frame, persist=True, classes=classes_to_count)
 
-    # Use the Object Counter to count objects in the frame and get the annotated image
+    # Use the Object Timer to timing objects in the frame and get the annotated image
     frame = timer.start_timing(frame, tracks, frame_count)
 
 # Release all Resources:
