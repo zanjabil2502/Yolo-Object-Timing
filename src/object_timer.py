@@ -26,6 +26,7 @@ class ObjectTimer:
         view_img=False,
         view_single_time=True,
         view_average_time=True,
+        view_max_time=True,
         draw_tracks=False,
         track_color=None,
         region_thickness=5,
@@ -75,6 +76,7 @@ class ObjectTimer:
         self.view_img = view_img
         self.view_single_time = view_single_time
         self.view_average_time = view_average_time
+        self.view_max_time = view_max_time
 
         self.names = names  # Classes names
         self.annotator = None  # Annotator
@@ -162,11 +164,6 @@ class ObjectTimer:
             # Extract tracks
             for box, track_id, cls in zip(boxes, track_ids, clss):
 
-                # Store class info
-                label = f"{self.names[cls]}#{track_id}"
-                if label not in self.object_first_frame:
-                    self.object_first_frame[label] = num_frame
-
                 # Draw Tracks
                 centroid_object = (
                     float((box[0] + box[2]) / 2),
@@ -194,27 +191,37 @@ class ObjectTimer:
 
                 is_inside = self.counting_region.contains(Point(track_line[-1]))
 
-                if prev_position is not None and is_inside:
-                    diff = num_frame - self.object_first_frame[label]
-                    time = int(diff * (1 / self.fps))
+                if is_inside:
+                    # Store class info
+                    label = f"{self.names[cls]}#{track_id}"
+                    if label not in self.object_first_frame:
+                        self.object_first_frame[label] = num_frame
 
-                    text_time = "Time: " + str(time) + " sec"
-                    label_box = f"{label} | {text_time}"
+                    if prev_position is not None:
+                        diff = num_frame - self.object_first_frame[label]
+                        time = int(diff * (1 / self.fps))
 
-                    # Draw bounding box
-                    self.object_timing_data[label_box] = time
-                    self.annotator.box_label(
-                        box,
-                        label=label_box,
-                        color=colors(int(track_id), True),
-                    )
+                        text_time = "Time: " + str(time) + " sec"
+                        label_box = f"{label} | {text_time}"
+
+                        # Draw bounding box
+                        self.object_timing_data[label_box] = time
+                        self.annotator.box_label(
+                            box,
+                            label=label_box,
+                            color=colors(int(track_id), True),
+                        )
 
         labels_dict = {}
 
         if len(self.object_timing_data) > 0 and self.view_average_time:
             values = self.object_timing_data.values()
             average = round(sum(values) / len(values), 2)
-            labels_dict["TIMER"] = f"Average Time: {average}"
+            labels_dict["Average Time"] = str(average) + " Sec"
+
+        if len(self.object_timing_data) > 0 and self.view_max_time:
+            values = self.object_timing_data.values()
+            labels_dict["Max Time"] = str(max(values)) + " Sec"
 
         if labels_dict:
             self.annotator.display_analytics(

@@ -14,6 +14,7 @@ YOLO Object Timing leverages the power of YOLO (You Only Look Once) for object d
 - **Average Timing from All Objects**: Computes the average time all objects spend in the defined region.
 - **Object Timing for Specific Object Using Tracking**: Tracks and calculates the time for specific objects based on tracking ID.
 - **Real-time Processing**: Processes video streams in real-time.
+- **Max Time Calculation**: Calculates the maximum time any object has spent in the defined region.
 
 ## How It Works
 
@@ -94,6 +95,7 @@ cv2.destroyAllWindows()
 ## Example Images
 
 ![example case](assets/image.png)
+![example case 1](assets/image-1.png)
 
 ## Use Case Analysis
 
